@@ -1,0 +1,75 @@
+class Solution
+{
+	public:
+	//Function to find sum of weights of edges of the Minimum Spanning Tree.
+	
+	static bool myComp(vector<int>& a, vector<int>& b){
+	    return a[2]<b[2];
+	}
+	
+	int findParent(vector<int>& parent, int node){
+	    if(parent[node] == node){
+	        return node;
+	    }
+	    
+	   parent[node] = findParent(parent, parent[node]);
+	    
+	    return parent[node] ;
+	}
+	
+	void unionSet(int u, int v, vector<int>& parent, vector<int>& rank){
+	    u = findParent(parent, u);
+	    v = findParent(parent, v);
+	    
+	    if(rank[u]<rank[v]){
+	        parent[u] = v;
+	        rank[v]++;
+	    }
+	    else{
+	        parent[v] = u;
+	        rank[u]++;
+	    }
+	}
+	
+	void getMeEdges(int V, vector<vector<int>> adjL[], vector<vector<int>> &edges){
+	    for(int u=0; u<V; u++){
+	        for(auto edge : adjL[u]){
+	            int v = edge[0];
+	            int w = edge[1];
+	            edges.push_back({u, v, w});
+	        }
+	    }
+	}
+	
+	
+    int spanningTree(int V, vector<vector<int>> adjL[])
+    {
+        vector<int> parent(V);
+        vector<int> rank(V, 0);
+        
+        for(int u=0; u<V; u++){
+            parent[u] = u;
+        }
+        vector<vector<int>> edges;
+        getMeEdges(V, adjL, edges);
+        
+        sort(edges.begin(), edges.end(), myComp);
+        int ans =0;
+        for(auto edge : edges){
+            int u = edge[0];
+            int v = edge[1];
+            int w = edge[2];
+            
+            u = findParent(parent, u);
+            v = findParent(parent, v);
+            
+            if(u != v){
+                unionSet(u, v, parent, rank);
+                ans += w;
+            }
+            
+        }
+        return ans;
+        // code here
+    }
+};
