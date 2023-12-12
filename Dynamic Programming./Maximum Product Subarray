@@ -1,1 +1,103 @@
+// brute force
 
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        int maxProd = INT_MIN;
+        for(int i=0; i<nums.size(); i++){
+            for(int j=i; j<nums.size(); j++){
+                int prod = 1;
+                for(int k=i; k<=j; k++){
+                    prod = prod*nums[k];
+                }
+                maxProd = max(maxProd, prod);
+            }
+
+        }
+        return maxProd;
+        
+    }
+};
+
+// T.C - O(N^3)
+// S.C - O(1)
+
+// Optimised Version
+
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        int maxProd = nums[0];
+        for(int i=0; i<nums.size(); i++){
+            int prod = nums[i];
+            for(int j=i+1; j<nums.size(); j++){
+                maxProd = max(maxProd, prod);
+                prod *= nums[j];
+            }
+            maxProd = max(maxProd, prod);
+        }
+        
+        return maxProd;
+        
+    }
+};
+
+// T.C - O(N^2)
+// S.C - O(1)
+
+// Optimal Approach
+
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        int pref = 1;
+        int suff = 1;
+        int ans = INT_MIN;
+        for(int i=0; i<nums.size(); i++){
+            if(pref == 0){
+                pref = 1;
+            }
+            if(suff == 0){
+                suff = 1;
+            }
+            pref = pref*nums[i];
+            suff = suff*nums[nums.size()-i-1];
+
+          ans = max(ans, max(suff, pref));
+        }
+          return ans;
+    }
+};
+
+// T.C - O(N)
+// S.C - O(1)
+
+
+// Optimised using Kadanes Algorithm
+
+
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        int n = nums.size();
+        
+        int maxProductSum = nums[0];
+        int minProductSum = nums[0];
+        int maxProductSoFar = nums[0];
+
+        for (int i = 1; i < n; ++i) {
+            if (nums[i] < 0) {
+                swap(maxProductSum, minProductSum);
+            }
+
+            maxProductSum = max(nums[i], maxProductSum * nums[i]);
+            minProductSum = min(nums[i], minProductSum * nums[i]);
+
+            maxProductSoFar = max(maxProductSoFar, maxProductSum);
+        }
+
+        return maxProductSoFar;
+    }
+};
+// T.C - O(N)
+// S.C - O(1)
