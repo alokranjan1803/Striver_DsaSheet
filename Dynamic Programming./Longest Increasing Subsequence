@@ -1,0 +1,192 @@
+// solve using resursion 
+
+class Solution {
+public:
+
+    int solveRec(vector<int>&nums,int curr,int prev){
+        // Base case
+        if(curr >= nums.size())
+            return 0;
+        // include
+        int include = 0;
+        // no element included and hence simply include the element
+        if(prev == -1 || nums[curr] > nums[prev]){
+            include = 1 + solveRec(nums,curr+1,curr);
+        }
+        // exclude
+        int exclude = 0 + solveRec(nums,curr+1,prev);
+        int ans = max(include,exclude);
+        return ans;
+    }
+    int lengthOfLIS(vector<int>& nums) {
+        int curr = 0;
+        int prev = -1;
+
+        int ans = solveRec(nums, curr, prev);
+        return ans;
+    }
+};
+
+// T.C - O(2^N)
+
+
+// SOLVE USING MEMOISATION
+
+class Solution {
+public:
+
+    int solveTopDown(vector<int>&nums,int curr,int prev,vector<vector<int>>&dp){
+        // Base case
+        if(curr >= nums.size())
+            return 0;
+        // Step 3 : Check if answer exists already
+        if(dp[curr][prev+1]!=-1){
+            return dp[curr][prev+1];
+        }
+        // include
+        int include = 0;
+        // no element included and hence simply include the element
+        if(prev == -1 || nums[curr] > nums[prev]){
+            include = 1 + solveTopDown(nums,curr+1,curr,dp);
+        }
+        // exclude
+        int exclude = 0 + solveTopDown(nums,curr+1,prev,dp);
+        int ans = max(include,exclude);
+        // Step 2 : Store ans in dp array
+        // prev + 1 -> as -1 is not a valid index
+        dp[curr][prev+1] = ans;
+        return dp[curr][prev+1];
+    }    
+    int lengthOfLIS(vector<int>& nums) {
+        int curr = 0;
+        int prev = -1;
+        int n = nums.size();
+        // step 1: create a dp array
+        vector<vector<int>> dp(n+1, vector<int> (n+1, -1));
+
+        int ans = solveMem(nums, curr, prev, dp);
+        return ans;
+    }
+};
+
+// T.C - O(N^2)
+// S.C - O(N^2)
+
+// SOLVE USING TABULATION
+
+class Solution {
+public:
+
+    
+    
+    int solveTab(vector<int>& nums){
+        int n = nums.size();
+        // step 1: create a dp array
+        vector<vector<int>> dp(n+1, vector<int> (n+1, 0));
+        // step 2: observe base case
+        // already handled in initialisation
+
+
+        // step 3: reverse the flow of direction
+        for(int curr=n-1; curr>=0; curr--){
+            for(int prev=curr-1; prev>=-1; prev--){
+                int include = 0;
+                if(prev == -1 || nums[curr] > nums[prev]){
+                    include = 1 + dp[curr+1][curr+1];
+                }
+
+                int exclude = dp[curr+1][prev+1];
+                    
+                dp[curr][prev+1] = max(include, exclude);
+            }
+             
+        }
+        return dp[0][0];
+    }
+    int lengthOfLIS(vector<int>& nums) {
+                
+
+        int ans = solveTab(nums);
+        return ans;
+    }
+};
+
+// T.C - O(N^2)
+// S.C - O(N^2)
+
+// SOLVE USING SPACE OPTIMISATION
+
+class Solution {
+public:
+
+    
+    
+    int solveSpaceOpt(vector<int>& nums){
+        int n = nums.size();
+        // step 1: create a dp array
+        vector<int> currRow(n+1, 0);
+        vector<int> nextRow(n+1, 0);
+        // step 2: observe base case
+        // already handled in initialisation
+
+
+        // step 3: reverse the flow of direction
+        for(int curr=n-1; curr>=0; curr--){
+            for(int prev=curr-1; prev>=-1; prev--){
+                int include = 0;
+                if(prev == -1 || nums[curr] > nums[prev]){
+                    include = 1 + nextRow[curr+1];
+                }
+
+                int exclude = nextRow[prev+1];
+                    
+                currRow[prev+1] = max(include, exclude);
+            }
+            // shifting logic
+            nextRow = currRow;
+             
+        }
+        return nextRow[0];
+    }
+    int lengthOfLIS(vector<int>& nums) {
+                
+
+        int ans = solveSpaceOpt(nums);
+        return ans;
+    }
+};
+
+// T.C - O(N^2)
+// S.C - O(N)
+
+// OPTIMISE USING BINARY SEARCH
+
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+
+        if(nums.size() == 0){
+            return 0;
+        }
+        vector<int> ans;
+        ans.push_back(nums[0]);
+
+        for(int i=1; i<nums.size(); i++){
+            if(nums[i]>ans.back()){
+                ans.push_back(nums[i]);
+            }
+            else{
+                // overwrite
+                // find index of just bigger element
+                int index = lower_bound(ans.begin(), ans.end(), nums[i]) - ans.begin();
+                ans[index] = nums[i];
+            }
+
+        }
+        return ans.size();
+        
+    }
+};
+
+// T.C - O(N*LOG(N))
+// S.C - O(N)
