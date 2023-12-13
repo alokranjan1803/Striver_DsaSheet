@@ -1,0 +1,155 @@
+// SOLVE USING RECURSION
+
+class Solution{
+		
+
+	public:
+	
+	int maxSumHelper(int arr[], int curr, int prev, int& n){
+	    if(curr >= n){
+	        return 0;
+	    }
+	    int include = 0;
+	    if(prev == -1 || arr[curr]>arr[prev]){
+	        include = arr[curr] + maxSumHelper(arr, curr+1, curr, n);
+	    }
+	  
+	    int exclude = 0 + maxSumHelper(arr, curr+1, prev, n);
+	    
+	    int ans = max(include, exclude);
+	    return ans;
+	}
+	
+	int maxSumIS(int arr[], int n)  
+	{ 
+	    int curr = 0;
+	    int prev = -1;
+	    int ans = maxSumHelper(arr, curr, prev, n);
+	    return ans;
+	    // Your code goes here
+	}  
+};
+
+// SOLVE USING MEMOISATION
+
+
+class Solution{
+		
+
+	public:
+	
+	int maxSumHelperMem(int arr[], int curr, int prev, int& n, vector<vector<int>>& dp){
+	    // base case
+	    if(curr >= n){
+	        return 0;
+	    }
+	    // check if solution is already exist
+	    if(dp[curr][prev+1] != -1){
+	        return dp[curr][prev+1];
+	    }
+	    int include = 0;
+	    if(prev == -1 || arr[curr]>arr[prev]){
+	        include = arr[curr] + maxSumHelperMem(arr, curr+1, curr, n, dp);
+	    }
+	  
+	    int exclude = 0 + maxSumHelperMem(arr, curr+1, prev, n, dp);
+	    
+	    int ans = max(include, exclude);
+	    // store in dp vector
+	    dp[curr][prev+1] = ans;
+	    return dp[curr][prev+1];
+	}
+	
+	int maxSumIS(int arr[], int n)  
+	{ 
+	    int curr = 0;
+	    int prev = -1;
+	    vector<vector<int>> dp(n+1, vector<int>(n+1, -1));
+	    int ans = maxSumHelperMem(arr, curr, prev, n, dp);
+	    return ans;
+	    // Your code goes here
+	}  
+};
+
+// SOLVE USING TABULATION
+
+
+
+class Solution{
+		
+
+	public:
+	
+	int maxSumHelperTab(int arr[], int& n){
+	    // create dp vector
+	    vector<vector<int>> dp(n+1, vector<int> (n+1, 0));
+	    
+	    // reverse the flow of direction 
+	    for(int curr=n-1; curr>=0; curr--){
+	        for(int prev=n-1; prev>=-1; prev--){
+	            int include = 0;
+        	    if(prev == -1 || arr[curr]>arr[prev]){
+        	        include = arr[curr] + dp[curr+1][curr+1];
+        	    }
+        	  
+        	    int exclude = 0 + dp[curr+1][prev+1];
+        	    
+        	    int ans = max(include, exclude);
+        	    // store in dp vector
+        	    dp[curr][prev+1] = ans;
+	        }
+	    }
+	    
+	    return dp[0][0];
+	}
+	
+	int maxSumIS(int arr[], int n)  
+	{ 
+	    int ans = maxSumHelperTab(arr, n);
+	    return ans;
+	    // Your code goes here
+	}  
+};
+
+
+// SOLVE USING SPACE OPTIMISATION
+
+
+class Solution{
+		
+
+	public:
+	
+	int maxSumHelperSo(int arr[], int& n){
+	    // create dp vector
+	    vector<int> currRow(n+1, 0);
+	    vector<int> nextRow(n+1, 0);
+	    
+	    // reverse the flow of direction 
+	    for(int curr=n-1; curr>=0; curr--){
+	        for(int prev=n-1; prev>=-1; prev--){
+	            int include = 0;
+        	    if(prev == -1 || arr[curr]>arr[prev]){
+        	        include = arr[curr] + nextRow[curr+1];
+        	    }
+        	  
+        	    int exclude = 0 + nextRow[prev+1];
+        	    
+        	    int ans = max(include, exclude);
+        	    // store in dp vector
+        	    currRow[prev+1] = ans;
+	        }
+	        // shifting login
+	        nextRow = currRow;
+	    }
+	    
+	    return nextRow[0];
+	}
+	
+	int maxSumIS(int arr[], int n)  
+	{ 
+	    int ans = maxSumHelperSo(arr, n);
+	    return ans;
+	    // Your code goes here
+	}  
+};
