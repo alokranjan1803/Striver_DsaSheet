@@ -1,0 +1,140 @@
+// SOLVE USING RECURSION
+
+class Solution{
+public:
+    bool isPalindrome(int i, int j, string str){
+        while(i<j){
+            if(str[i] != str[j]){
+                return false;
+            }
+            i++;
+            j--;
+        }
+        return true;
+    }
+
+    int palindromicPartitionHelper(int i, int n, string& str){
+        // base case
+        if(i==n){
+            return 0;
+            
+        }
+        
+        int minCost = INT_MAX;
+        for(int j=i; j<n; j++){
+            if(isPalindrome(i, j, str)){
+                int cost = 1 + palindromicPartitionHelper(j+1, n, str);
+                minCost = min(minCost, cost);
+            }
+        }
+        return minCost;
+    }
+
+    int palindromicPartition(string str)
+    {
+        int n = str.size();
+        int ans = palindromicPartitionHelper(0, n, str)-1;
+        return ans;
+        // code here
+    }
+};
+
+
+// SOLVE USING MEMOISATION
+
+class Solution{
+public:
+    bool isPalindrome(int i, int j, string str){
+        while(i<j){
+            if(str[i] != str[j]){
+                return false;
+            }
+            i++;
+            j--;
+        }
+        return true;
+    }
+
+    int palindromicPartitionHelper(int i, int n, string& str, vector<int>& dp){
+        // base case
+        if(i==n){
+            return 0;
+            
+        }
+        // check if ans is already exist
+        if(dp[i] != -1){
+            return dp[i];
+        }
+        
+        int minCost = INT_MAX;
+        for(int j=i; j<n; j++){
+            if(isPalindrome(i, j, str)){
+                int cost = 1 + palindromicPartitionHelper(j+1, n, str, dp);
+                minCost = min(minCost, cost);
+            }
+        }
+        // store ans in dp
+        dp[i] = minCost;
+        return dp[i];
+    }
+
+    int palindromicPartition(string str)
+    {
+        int n = str.size();
+        // create dp
+        vector<int> dp(n+1, -1);
+        int ans = palindromicPartitionHelper(0, n, str, dp)-1;
+        return ans;
+        // code here
+    }
+};
+
+
+// SOLVE USING TABULATION
+
+
+class Solution{
+public:
+    bool isPalindrome(int i, int j, string str){
+        while(i<j){
+            if(str[i] != str[j]){
+                return false;
+            }
+            i++;
+            j--;
+        }
+        return true;
+    }
+
+    int palindromicPartitionHelper(int i, int n, string& str){
+        // create dp
+        vector<int> dp(n+1, 0);
+        
+        
+        
+        
+        for(int i=n-1; i>=0; i--){
+            int minCost = INT_MAX;
+            for(int j=i; j<n; j++){
+                if(isPalindrome(i, j, str)){
+                    int cost = 1 + dp[j+1];
+                    minCost = min(minCost, cost);
+                }
+            }
+            dp[i] = minCost;
+        }
+        
+        
+        
+        return dp[0];
+    }
+
+    int palindromicPartition(string str)
+    {
+        int n = str.size();
+        
+        int ans = palindromicPartitionHelper(0, n, str)-1;
+        return ans;
+        // code here
+    }
+};
