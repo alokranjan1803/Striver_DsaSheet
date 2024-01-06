@@ -1,0 +1,152 @@
+// SOLVE USING RECURSION
+
+class Solution
+{
+    public:
+    //Function to find minimum number of attempts needed in 
+    //order to find the critical floor.
+    int eggDrop(int n, int k) 
+    {
+        // base case
+        if(k==0 || k==1 || n==1){
+            return k;
+        }
+        
+        
+        
+        int mini = INT_MAX;
+        
+        for(int f=1; f<=k; f++){
+            int moves = max(eggDrop(n-1, f-1) , eggDrop(n, k-f));
+            
+            mini = min(mini, moves);
+            
+        }
+        
+        return 1 + mini;
+        
+        
+                // your code here
+    }
+};
+
+
+// SOLVE USING MEMOISATION
+
+class Solution
+{
+    public:
+    //Function to find minimum number of attempts needed in 
+    //order to find the critical floor.
+    int eggDropHelper(int n, int k, vector<vector<int>>& dp){
+        // base case
+        if(k==0 || k==1 || n==1){
+            return k;
+        }
+        
+        // check answer already exist
+        if(dp[n][k] != -1){
+            return dp[n][k];
+        }
+        
+        int mini = INT_MAX;
+        
+        for(int f=1; f<=k; f++){
+            int moves = 1 + max(eggDropHelper(n-1, f-1, dp) , eggDropHelper(n, k-f, dp));
+            
+            mini = min(mini, moves);
+            
+        }
+        
+        dp[n][k] =  mini;
+        return dp[n][k];
+        
+    }
+    
+    int eggDrop(int n, int k) 
+    {
+        // create dp
+        vector<vector<int>> dp(n+1, vector<int> (k+1, -1));
+        
+        int ans = eggDropHelper(n, k, dp);
+        return ans;
+        
+                // your code here
+    }
+};
+
+// SOLVE USING TABULATION
+
+
+#include <vector>
+#include <algorithm>
+#include <climits>
+
+class Solution {
+public:
+    int eggDrop(int n, int k) {
+        // Create dp array
+        vector<vector<int>> dp(n + 1, vector<int>(k + 1, 0));
+
+        // Initialize base cases
+        for (int i = 1; i <= n; i++) {
+            dp[i][1] = 1; // If there is only one floor, one attempt is needed.
+            dp[i][0] = 0; // If there are no floors, no attempts are needed.
+        }
+
+        for (int j = 1; j <= k; j++) {
+            dp[1][j] = j; // If there is only one egg, attempts are equal to the number of floors.
+        }
+
+        // Tabulation
+        for (int i = 2; i <= n; i++) {
+            for (int j = 2; j <= k; j++) {
+                dp[i][j] = INT_MAX;
+                for (int x = 1; x <= j; x++) {
+                    int breaks = dp[i - 1][x - 1];  // Egg breaks, check below floors
+                    int doesNotBreak = dp[i][j - x];  // Egg does not break, check above floors
+                    int attempts = 1 + max(breaks, doesNotBreak);  // One attempt for the current floor
+                    dp[i][j] = min(dp[i][j], attempts);
+                }
+            }
+        }
+
+        return dp[n][k];
+    }
+};
+
+
+// SOLVE USING SPACE OPTIMISATION
+
+
+#include <vector>
+#include <algorithm>
+#include <climits>
+
+class Solution {
+public:
+    int eggDrop(int n, int k) {
+        // Initialize vectors for the current and previous rows
+        vector<int> prev(k + 1, 0); 
+        vector<int> cur(k + 1, 0);
+
+        // Base cases: if there is only one egg, attempts are equal to the number of floors
+        for (int flr = 0; flr <= k; flr++)
+            prev[flr] = flr;
+
+        // Dynamic Programming iteration
+        for (int eggs = 2; eggs <= n; eggs++) {
+            for (int flr = 1; flr <= k; flr++) {
+                int mini = INT_MAX;
+                for (int f = 1; f <= flr; f++) {
+                    int temp = 1 + std::max(prev[f - 1], cur[flr - f]);
+                    mini = std::min(mini, temp);
+                }
+                cur[flr] = mini;
+            }
+            prev = cur; // Update the previous row for the next iteration
+        }
+
+        return prev[k];
+    }
+};
