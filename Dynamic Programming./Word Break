@@ -1,0 +1,123 @@
+//SOLVE USING RECURSION
+
+class Solution {
+public:
+    // solve using recursion
+    bool checkWord(vector<string>& wordDict, string& s){
+        for(auto& i:wordDict){
+            if(s == i){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool wordBreakSolver( vector<string>& wordDict,string& s, int start ){
+        if(start == s.size()){
+            return true;
+
+        }
+
+        string word = "";
+        bool flag = false;
+        for(int i=start; i<s.size(); i++){
+            word += s[i];
+            if(checkWord(wordDict, word)){
+                flag = flag || wordBreakSolver( wordDict, s, i+1);
+            }
+        }
+        return flag;
+    }
+
+    bool wordBreak(string s, vector<string>& wordDict) {
+        return wordBreakSolver( wordDict, s, 0);
+        
+    }
+};
+
+
+//SOLVE USING MEMOISATION 
+
+class Solution {
+public:
+    // solve using Top-Down
+    bool checkWord(vector<string>& wordDict, string& s){
+        for(auto& i:wordDict){
+            if(s == i){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool wordBreakSolver( vector<string>& wordDict,string& s, int start , vector<int>& dp){
+        if(start == s.size()){
+            return true;
+
+        }
+        // step 2: check if ans already exist
+        if(dp[start] != -1){
+            return dp[start];
+        }
+
+        string word = "";
+        bool flag = false;
+        for(int i=start; i<s.size(); i++){
+            word += s[i];
+            if(checkWord(wordDict, word)){
+                flag = flag || wordBreakSolver( wordDict, s, i+1, dp);
+            }
+        }
+        // store ans in dp
+        dp[start] = flag;
+        return dp[start];
+    }
+
+    bool wordBreak(string s, vector<string>& wordDict) {
+        // step 1: create dp array
+        vector<int> dp(s.size()+1, -1);
+        return wordBreakSolver( wordDict, s, 0, dp);
+        
+    }
+};
+
+
+// SOLVE USING TABULATION
+
+
+class Solution {
+public:
+    // solve using Bottom up
+    bool checkWord(vector<string>& wordDict, string& s){
+        for(auto& i:wordDict){
+            if(s == i){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool wordBreakSolver( vector<string>& wordDict,string& s, vector<int>& dp){
+        
+        for(int start=s.size()-1; start>=0; start--){
+            string word = "";
+            bool flag = false;
+            for(int i=start; i<s.size(); i++){
+                word += s[i];
+                if(checkWord(wordDict, word)){
+                    flag = flag || dp[i+1];
+                }
+            }
+            dp[start] = flag;
+        }
+  
+        return dp[0];
+    }
+
+    bool wordBreak(string s, vector<string>& wordDict) {
+        // step 1: create dp array
+        vector<int> dp(s.size()+1, true);
+        return wordBreakSolver( wordDict, s, dp);
+        
+    }
+};
