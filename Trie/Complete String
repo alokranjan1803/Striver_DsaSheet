@@ -1,0 +1,95 @@
+#include <bits/stdc++.h> 
+
+class TrieNode{
+    public:
+
+    TrieNode* children[26];
+    bool isTerminal;
+
+    bool containsKey(char ch){
+        return (children[ch - 'a'] != NULL);
+    }
+
+    void put(char ch, TrieNode* child){
+        children[ch - 'a'] = child;
+    }
+
+    TrieNode* get(char ch){
+        return children[ch - 'a'];
+    }
+
+    void setEnd(){
+        isTerminal = true;
+    }
+
+    bool isEnd(){
+        return isTerminal;
+    }
+
+
+};
+
+class Trie{
+    public:
+    TrieNode*root;
+    Trie(){
+        root = new TrieNode();
+    }
+
+    void insert(string word){
+        TrieNode* child = root;
+
+        for(int i=0; i<word.length(); i++){
+            if(!child->containsKey(word[i])){
+                child->put(word[i], new TrieNode());
+            }
+            child = child->get(word[i]);
+        }
+        child->setEnd();
+    }
+
+    bool checkAllPrefix(string word){
+        TrieNode* child = root;
+        bool isTerminal = true;
+        for(int i=0; i<word.size(); i++){
+            if(child->containsKey(word[i])){
+                child = child->get(word[i]);
+                isTerminal = isTerminal & child->isEnd();
+            }
+            else{
+                return false;
+            }
+        }
+        return isTerminal;
+    }
+
+};
+
+string completeString(int n, vector<string> &a){
+
+    Trie* trie = new Trie();
+    for(auto word:a){
+        trie->insert(word);
+    }
+    string longest = "";
+    for(auto word:a){
+        if(trie->checkAllPrefix(word)){
+            if(word.size() > longest.size()){
+                longest = word;
+            }
+            else if(word.size()==longest.size() && word<longest){
+                longest = word;
+            }
+        }
+    }
+    if(longest == ""){
+        return "None";
+    }
+
+    return longest;
+
+
+    
+
+    // Write your code here.
+}
