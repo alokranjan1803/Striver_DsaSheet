@@ -1,0 +1,114 @@
+#include <bits/stdc++.h>
+
+class TrieNode{
+    public:
+    TrieNode* children[26];
+    int cntEndWith = 0;
+    int cntPrefix = 0;
+
+    bool containsKey(char ch){
+        return (children[ch - 'a'] != NULL);
+    }
+
+    TrieNode* get(char ch){
+        return children[ch - 'a'];
+    }
+
+    void put(char ch, TrieNode* child){
+        children[ch - 'a'] = child ;
+    }
+
+    void increasedEnd(){
+        cntEndWith++;
+    }
+
+    void increasePrefix(){
+        cntPrefix++;
+    }
+
+    void deleteEnd(){
+        cntEndWith--;
+    }
+
+    void reducePrefix(){
+        cntPrefix--;
+    }
+
+    int getEnd(){
+        return cntEndWith;
+    }
+
+    int getPrefix(){
+        return cntPrefix;
+    }
+};
+
+class Trie{
+
+    public:
+    TrieNode* root;
+
+    Trie(){
+        root = new TrieNode();
+        // Write your code here.
+    }
+
+    void insert(string &word){
+        TrieNode* child = root;
+        for(int i=0; i<word.length(); i++){
+            if(!child->containsKey(word[i])){
+                child->put(word[i], new TrieNode());
+            }
+            child = child->get(word[i]);
+            child->increasePrefix();
+
+        }
+        child->increasedEnd();
+        // Write your code here.
+    }
+
+    int countWordsEqualTo(string &word){
+        TrieNode* child = root;
+        for(int i=0; i<word.length(); i++){
+            if(child->containsKey(word[i])){
+                child = child->get(word[i]);
+            }
+            else{
+                return 0;
+            }
+            
+        }
+        return child->getEnd();
+        // Write your code here.
+    }
+
+    int countWordsStartingWith(string &word){
+        TrieNode* child = root;
+        for(int i=0; i<word.length(); i++){
+            if(child->containsKey(word[i])){
+                child = child->get(word[i]);
+            }
+            else{
+                return 0;
+            }
+        }
+        return child->getPrefix();
+        // Write your code here.
+    }
+
+    void erase(string &word){
+
+        TrieNode* child = root;
+        for(int i=0; i<word.length(); i++){
+            if(child->containsKey(word[i])){
+                child = child->get(word[i]);
+                child->reducePrefix();
+            }
+            else{
+                return;
+            }
+        } 
+        child->deleteEnd();
+        // Write your code here.
+    }
+};
