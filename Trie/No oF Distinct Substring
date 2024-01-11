@@ -1,0 +1,42 @@
+#include<bits/stdc++.h>
+
+class TrieNode{
+    public:
+    TrieNode* children[26];
+
+    bool containsKey(char ch){
+        return children[ch - 'a'];
+    }
+
+    TrieNode* get(char ch){
+        return children[ch - 'a'];
+    }
+
+    void put(char ch, TrieNode* child){
+        children[ch - 'a'] = child;
+    }
+
+};
+
+int countDistinctSubstrings(string &s)
+{
+    TrieNode* root = new TrieNode();
+    int countSubstr = 0;
+
+    for(int i=0; i<s.size(); i++){
+        TrieNode* child = root;
+
+        for(int j=i; j<s.size(); j++){
+            if(!child->containsKey(s[j])){
+                child->put(s[j], new TrieNode());
+                countSubstr++;
+            }
+
+            child = child->get(s[j]);
+        }
+    }
+    return countSubstr+1;
+
+
+    //    Write your code here.
+}
