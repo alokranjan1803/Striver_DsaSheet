@@ -1,0 +1,88 @@
+class TrieNode{
+    public:
+        TrieNode* children[2];
+
+        bool containsKey(int ind){
+            return children[ind] != NULL;
+        }
+
+        TrieNode* get(int ind){
+            return children[ind];
+        }
+
+        void put(int ind, TrieNode* child){
+            children[ind] = child;
+        }
+};
+
+class Trie{
+    public:
+    TrieNode* root;
+
+    Trie(){
+        root = new TrieNode();
+    }
+
+    void insert(int num){
+        TrieNode* child = root;
+
+        for(int i=31; i>=0; i--){
+            int bit = (num>>i) & 1;
+            if(!child->containsKey(bit)){
+                child->put(bit, new TrieNode());
+            }
+            child = child->get(bit);
+        }
+    }
+
+    int findMax(int num){
+        TrieNode* child = root;
+        int maxNum = 0;
+        for(int i=31; i>=0; i--){
+            int bit = (num>>i) & 1;
+            if(child->containsKey(!bit)){
+                maxNum = maxNum | (1<<i);
+                child = child->get(!bit);
+            }
+            else{
+                child = child->get(bit);
+            }
+        }
+        return maxNum;
+    }
+};
+
+class Solution {
+public:
+    vector<int> maximizeXor(vector<int>& nums, vector<vector<int>>& queries) {
+
+        vector<int> ans(queries.size(), 0);
+        vector<pair<int, pair<int, int>>> offQueries;
+        sort(nums.begin(), nums.end());
+        int index=0;
+        for(auto &it: queries){
+            offQueries.push_back({it[1], {it[0], index++}});
+        }
+
+        sort(offQueries.begin(), offQueries.end());
+        int i=0; 
+        int n = nums.size();
+        Trie trie;
+
+        for(auto &it : offQueries){
+            while(i<n && nums[i] <= it.first){
+                trie.insert(nums[i]);
+                i++;
+            }
+            if(i!=0){
+                ans[it.second.second] = trie.findMax(it.second.first);
+
+            }
+            else{
+                ans[it.second.second] = -1;
+            }
+        }
+        return ans;
+        
+    }
+};
