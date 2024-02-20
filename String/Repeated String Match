@@ -14,3 +14,88 @@ class Solution {
     return -1;
   }
 };
+
+
+
+// USING KMP Algorithm
+
+class Solution {
+public:
+//   Finding lps func
+    void lpsfind(vector<int> &lps,string s){
+        int pre=0;
+        int suf=1;
+
+        while(suf < s.size()){
+            if(s[pre] == s[suf]){
+                lps[suf]=pre+1;
+                pre++;
+                suf++;
+            }
+            else{
+                if(pre == 0){
+                    lps[suf]=0;
+                    suf++;
+                }
+                else{
+                    pre=lps[pre-1];
+                }
+            }
+        }
+    }
+//   string matching KMP func
+    bool KMP_MATCH(string s,string t){
+        vector<int> lps(t.size(),0);
+        lpsfind(lps,t);
+
+        int i=0,j=0;
+        while(i<s.size() && j<t.size()){
+            if(s[i] == t[j]){
+                i++;
+                j++;
+            }
+            else{
+                if(j==0){
+                    i++;
+                }
+                else{
+                    j=lps[j-1];
+                }
+            }
+        }
+        return j==t.size();
+    }
+    int repeatedStringMatch(string a, string b) {
+
+//     checking if it is alreay equal
+
+        if(a==b){
+            return 1;
+        }
+//    making a size equal to b  
+        int rep=1;
+        string temp = a;
+        while(temp.size()< b.size()){
+            temp+=a;
+            rep++;
+        }
+
+
+    // KMP MATCH1
+        if(KMP_MATCH(temp,b)){
+            return rep;
+        }
+
+
+
+   // KMP MATCH2
+        if(KMP_MATCH(temp+a,b)){
+            return rep+1;
+        }
+
+
+
+    return -1;
+
+    }
+};
