@@ -1,0 +1,23 @@
+class Solution {
+public:
+    bool isAnagram(const std::string& s, const std::string& t) {
+        if (s.length() != t.length()) {
+            return false;
+        }
+
+        std::unordered_map<char, int> charCount;
+
+        for (char c : s) {
+            charCount[c]++;
+        }
+
+        for (char c : t) {
+            if (charCount.find(c) == charCount.end() || charCount[c] == 0) {
+                return false;
+            }
+            charCount[c]--;
+        }
+
+        return true;
+    }
+};
