@@ -1,0 +1,101 @@
+// USING STACK
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode* temp = head;
+
+        stack<int> st;
+
+        while(temp!=NULL){
+            st.push(temp->val);
+            temp = temp->next;
+        }
+
+        temp = head;
+
+        while(temp!=NULL){
+            temp->val = st.top();
+            st.pop();
+            temp = temp->next;
+        }
+        return head;
+        
+    }
+};
+
+// T.C - O(N)
+// S.C - O(N)
+
+// ITERATIVE APPROACH
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode* curr = head;
+        ListNode* prev = NULL;
+
+        while(curr!=NULL){
+           ListNode* forward = curr->next;
+           curr->next = prev;
+           prev = curr;
+           curr = forward; 
+
+        }
+        return prev;
+        
+    }
+};
+
+// T.C - O(N)
+// S.C - O(1)
+
+// RECURSIVE APPROACH
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        if(head == NULL || head->next==NULL){
+            return head;
+        }
+        ListNode* prev = NULL;
+        ListNode* newHead = reverseList(head->next);
+        ListNode* forward = head->next;
+        forward->next = head;
+        head->next = prev;
+        return newHead;
+    }
+};
+
+// T.C - O(N)
+// S.C - O(1)
