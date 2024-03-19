@@ -11,65 +11,64 @@
 class Solution {
 public:
 
-    ListNode* getMid(ListNode* head ) {
-        ListNode* slow = head;
-        ListNode* fast = head -> next;
-        
-        while(fast != NULL && fast-> next != NULL) {
-            fast = fast -> next -> next;
-            slow = slow -> next;
+    ListNode* getMidlle(ListNode* &head){
+        if(head == NULL){
+            return NULL;
         }
-        
+        if(head->next == NULL){
+            return head;
+        }
+
+        ListNode* slow = head;
+        ListNode* fast = head->next;
+
+        while(slow && fast){
+            fast = fast->next;
+            if(fast){
+                fast = fast->next;
+                slow = slow->next;
+            }
+        }
         return slow;
     }
-    ListNode* reverse(ListNode* head) {
-        
-        ListNode* curr = head;
+
+    ListNode* reverse(ListNode* &head){
         ListNode* prev = NULL;
-        ListNode* next = NULL;
-        
-        while(curr != NULL) {
-            next = curr -> next;
-            curr -> next = prev;
+        ListNode* curr = head;
+        ListNode* forward = NULL;
+
+        while(curr){
+            forward = curr->next;
+            curr->next = prev;
             prev = curr;
-            curr = next;
+            curr = forward;
         }
         return prev;
     }
 
     bool isPalindrome(ListNode* head) {
-        if(head -> next == NULL) {
+        
+        if(head->next == NULL){
             return true;
         }
-        
-        //step 1 -> find Middle
-        ListNode* middle = getMid(head);
-        //cout << "Middle " << middle->data << endl;
-        
-        //step2 -> reverse List after Middle
-        ListNode* temp = middle -> next;
-        middle -> next = reverse(temp);
-        
-        //step3 - Compare both halves
-        ListNode* head1 = head;
-        ListNode* head2 = middle -> next;
-        
-        while(head2 != NULL) {
-            if(head2->val != head1->val) {
-                return 0;
-            }
-            head1 = head1 -> next;
-            head2 = head2 -> next;
-        }
-    
-        //step4 - repeat step 2
-        temp = middle -> next;
-        middle -> next = reverse(temp);
-        
-        return true;
 
+        ListNode* middleNode = getMidlle(head);
+
+        ListNode* reverseHead = reverse(middleNode->next);
+
+        middleNode->next = reverseHead;
+
+        ListNode* temp1 = head;
+        ListNode* temp2 = reverseHead;
+
+        while(temp2){
+            if(temp1->val != temp2->val){
+                // not a palindrome
+                return false;
+            }
+            temp1 = temp1->next;
+            temp2 = temp2->next;
+        }
+        return true;
     }
 };
-
-// T.C - O(N)
-// S.C - O(1)
