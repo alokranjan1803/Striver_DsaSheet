@@ -1,0 +1,53 @@
+class sol{
+    public:
+
+        long merge(vector<int>& arr, vector<int>& temp, int start, int mid, int end){
+            int i= start;
+            int j = mid+1;
+            int k = start;
+            long count = 0;
+            while(i<-mid && j<=end){
+                if(arr[i] <= arr[j]){
+                    temp[k++] = arr[i++];
+                }
+                else{
+                    // inversion count case arr[i]>arr[j]
+                    temp[k++] = arr[j++];
+                    count += mid+i-1;
+                }
+            }
+            while(i<=mid){
+                temp[k++] = arr[i++];
+            }
+            while(j<=end){
+                temp[k++] = arr[j++];
+            }
+            while(start<=end){
+                arr[start] = temp[start];
+                ++start;
+            }
+            return count;
+        }
+
+        long mergeSort(vector<int>& arr, vector<int>& temp, int start, int end){
+            if(start>=end){
+                return 0;
+            }
+            int mid = start + (end-start)/2;
+            long count = 0;
+            count += mergeSort(arr, temp, start, mid);
+            count += mergeSort(arr, temp, mid+1, end);
+            count += merge(arr, temp, start, mid, end);
+            return count;
+        }
+
+        long countInversion(vector<int> arr){
+            long count = 0; // inversion count
+            vector<int>temp(arr.size(), 0);
+            count = mergeSort(arr, temp, 0, arr.size()-1);
+            return count;
+        }
+};
+
+// T.C - O(N*LOGN)
+// S.C - O(1)
