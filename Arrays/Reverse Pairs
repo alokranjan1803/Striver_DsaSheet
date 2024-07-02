@@ -53,3 +53,83 @@ public:
 
 // T.C - O(N)
 // S.C - O(N)
+
+
+
+class Solution {
+public:
+
+
+    // Function to merge two parts of the array and count reverse pairs
+     int merge(vector<int>& nums, int l, int m, int r) {
+         int count = 0;
+        int len1 = m - l + 1;
+        int len2 = r - m;
+
+        // Dynamic allocation for temporary arrays
+        int *left = new int[len1];
+        int *right = new int[len2];
+
+        // Copying data to temporary arrays left[] and right[]
+        int p=l;
+        for (int i = 0; i < len1; i++)
+            left[i] = nums[p++];
+        for (int j = 0; j < len2; j++)
+            right[j] = nums[p++];
+
+        // Counting reverse pairs
+            int i = 0, j = 0;
+            while (i < len1 && j < len2) {
+                if (left[i] > 2LL * right[j]) { // Cast to long long to prevent overflow
+                    count += (len1 - i); // All remaining elements in left[] will form reverse pairs with right[j]
+                    j++;
+                } else {
+                    i++;
+                }
+            }
+        // Merging the temporary arrays back into arr[l..r]
+        i = 0; j = 0; int k = l;
+        while (i < len1 && j < len2) {
+            if (left[i] <= right[j]) {
+                nums[k++] = left[i++];
+            } else {
+                nums[k++] = right[j++];
+            }
+        }
+
+        // Copying the remaining elements of left[], if there are any
+        while (i < len1) {
+            nums[k++] = left[i++];
+        }
+
+        // Copying the remaining elements of right[], if there are any
+        while (j < len2) {
+            nums[k++] = right[j++];
+        }
+
+        // Free the memory allocated for temporary arrays
+        delete[] left;
+        delete[] right;
+
+        return count;
+    }
+
+    // Function to implement merge sort and count reverse pairs
+     int mergeSort(vector<int>& nums, int l, int r) {
+        int count = 0;
+        if (l < r) {
+            int m = l + (r - l) / 2;
+
+            count += mergeSort(nums, l, m);
+            count += mergeSort(nums, m + 1, r);
+            count += merge(nums, l, m, r);
+        }
+        return count;
+    }
+
+    // Function to count reverse pairs in the array.
+
+    int reversePairs(vector<int>& nums) {
+        return mergeSort(nums, 0, nums.size()-1);
+    }
+};
