@@ -1,0 +1,46 @@
+class Solution
+{
+    public:
+    //Function to return the minimum cost to react at bottom
+	//right cell from top left cell.
+	
+	
+	// lets think about dijkstra
+	vector<vector<int>> direction = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
+    int minimumCostPath(vector<vector<int>>& grid) 
+    {
+        int n = grid.size();
+        vector<vector<int>> dist(n, vector<int> (n, 1e9));
+        priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> pq;
+        
+        dist[0][0] = grid[0][0];
+        pq.push({grid[0][0], {0, 0}});
+        
+        while(!pq.empty()){
+            auto fNode = pq.top();
+            pq.pop();
+            
+            int cost = fNode.first;
+            int row = fNode.second.first;
+            int col = fNode.second.second;
+            
+            if(row == n-1 && col == n-1){
+                return cost;
+            }
+            for(auto &dir:direction){
+                int newx = row + dir[0];
+                int newy = col + dir[1];
+                
+                
+                
+                if(newx>=0 && newx<n && newy>=0 && newy<n && cost + grid[newx][newy] < dist[newx][newy]){
+                    dist[newx][newy] = cost + grid[newx][newy];
+                    pq.push({dist[newx][newy], {newx, newy}});
+                }
+            }
+        }
+        
+        return 0;
+        // Code here
+    }
+};
