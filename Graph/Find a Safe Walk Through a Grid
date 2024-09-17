@@ -1,0 +1,60 @@
+class Solution {
+public:
+    
+    vector<vector<int>> direction = {{1,0}, {-1,0}, {0,1}, {0,-1}};
+
+    bool findSafeWalk(vector<vector<int>>& grid, int health) {
+        int n = grid.size();
+        int m = grid[0].size();
+        vector<vector<int>> healthLeft(n, vector<int> (m, -1));
+       
+        queue<pair<pair<int, int>, int>> q;
+        
+        if(grid[0][0] == 0){
+            q.push({{0, 0}, health});
+            healthLeft[0][0] = health;
+        }
+        else if(grid[0][0] == 1){
+            q.push({{0, 0}, health-1});
+            healthLeft[0][0] = health-1;
+        }
+       
+        
+
+        while(!q.empty()){
+            auto fNode = q.front();
+            q.pop();
+            int x = fNode.first.first;
+            int y = fNode.first.second;
+            int heal = fNode.second;
+
+            if(x==n-1 && y==m-1 && heal>0){
+                
+                    return true;
+                
+            }
+
+            for(auto dir:direction){
+                int newX = x + dir[0];
+                int newY = y + dir[1];
+
+                if(newX>=0 && newX<n && newY>=0 && newY<m ){
+                    int newHealth = heal;
+
+                    if(grid[newX][newY] == 1){
+                        newHealth = heal-1;
+                    }
+
+                    if(newHealth > 0 && newHealth > healthLeft[newX][newY]){
+                        q.push({{newX, newY}, newHealth});
+                        healthLeft[newX][newY] = newHealth;
+                    }
+                }
+                
+            }
+            
+        }
+
+        return false;
+    }
+};
